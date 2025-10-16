@@ -103,25 +103,8 @@ if [ ! -z "$1" ]; then
 	GPUS=${1//,/ }
     fi
 
-    # Setup NVSwitches (if nb of GPUs equal to 8)
-    if [ ${NB_GPUS} -eq 8 ]; then
-        NVSWITCHES=$(nvidia_nvlink_bdfs)
-        for nvswitch_bdf in ${NVSWITCHES}
-        do
-            echo "======= Prepare NVSwitch ${nvswitch_bdf} for PPCIe"
-            enable_ppcie_mode ${nvswitch_bdf}
-        done
-    fi
-
     for gpu_bdf in ${GPUS}
     do
-        if [ ${NB_GPUS} -eq 8 ]; then
-            echo "======= Prepare ${gpu_bdf} for PPCIe"
-            enable_ppcie_mode ${gpu_bdf}
-        else
-            echo "======= Prepare ${gpu_bdf} for CC"
-            enable_cc_mode ${gpu_bdf}
-        fi
 
 	# virsh expect input format : pci_0000_b8_00_0
 	virsh_gpu_bdf=$(echo "${gpu_bdf}" | tr :. _)

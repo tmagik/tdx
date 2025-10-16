@@ -63,7 +63,7 @@ def add_vsock(cmd):
 
 def prepare_gpus(gpus):
     gpu_args = ','.join(gpus)
-    setup_cmd = f'sudo {file_path}/../gpu-cc/h100/setup-gpus.sh {gpu_args}'
+    setup_cmd = f'sudo {file_path}/../gpu-cc/b200/setup-gpus.sh {gpu_args}'
     print(setup_cmd)
     subprocess.check_call(setup_cmd, shell=True, stderr=subprocess.STDOUT)
 
@@ -88,11 +88,14 @@ def pci_devices(vendor, product) -> list[str]:
     return devices
 
 def setup_ppcie(cmd):
-    gpus = pci_devices("10de", "2335")
-    nvswitches = pci_devices("10de", "22a3")
+    #gpus = pci_devices("10de", "2335")
+    #nvswitches = pci_devices("10de", "22a3")
+    print("hack for B200")
+    gpus = pci_devices("10de", "2901")
+    nvswitches = ["0000:bb:00.0", "0000:bb:00.1", "0000:bb:00.2", "0000:bb:00.3"]
 
     if len(gpus) != 8:
-        print("PPCIe mode requires 8 GPUs")
+        print("PPCIe mode requires 8 GPUs (%d found)" % (len(gpus)))
         exit(1)
     if len(nvswitches) != 4:
         print("PPCIe mode requires 4 NVSwitches")
